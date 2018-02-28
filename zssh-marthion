@@ -1,0 +1,12 @@
+#!/bin/bash
+
+declare -A user_password =(
+	["vagrant"]="root@vagrant"
+)
+
+$1={$1:=vagrant}
+$2={$2:=ssh}
+if [ $1 == "vagrant" ]
+then
+	$2 ${user_password["vagrant"]
+elif [$1 ==]

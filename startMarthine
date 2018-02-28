@@ -1,0 +1,4 @@
+#!/bin/bash
+cd ~/Documents/dev_12301/config/
+vagrant up
+ifconfig vboxnet0 up

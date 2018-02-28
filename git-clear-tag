@@ -1,0 +1,10 @@
+#!/bin/bash
+
+tag=${1-'dev'}
+echo $1
+cd $(pwd)
+pwd
+git tag|xargs git tag -d
+git pull
+git tag -ln|egrep ^$tag
+

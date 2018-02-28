@@ -1,0 +1,28 @@
+#!/bin/bash
+cd /home/lerko/Documents/dev_12301/www/html
+case "$1" in
+    update)
+        rm channel_v3.json
+        wget https://packagecontrol.io/channel_v3.json
+        ;;
+    start)
+        nohup php -S localhost:8089 1> ~/php-sublime-server.log 2> ~/php-sublime-server-error.log &
+        ;;
+    stop)
+        PID=`ps -axu|grep 8089|awk 'NR==1{print $2}'`
+        echo "杀死了sublime包服务器进程 $PID"
+        kill $PID
+        ;;
+    status)
+        ps -axu|grep 8089|head -1
+        ;;
+    log)
+        if [[ $2=='error' ]]; then
+            tail -f ~/php-sublime-server.log
+        elif [[ $2=='success' ]]; then
+            tail -f ~/php-sublime-server-error.log
+        fi
+        ;;
+    *)
+        echo "sublime-package-server update|start|stop|log error|log success"
+esac

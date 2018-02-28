@@ -1,0 +1,21 @@
+#!/bin/bash
+
+localpath="/home/lerko/Documents/dev_12301/www/html/Service"
+remotepath="/var/www/html/Service/"
+
+function sftp_upload_file(){
+    for file in `git diff --raw master |awk '{print $6}'`; do
+        remoteDir=$remotepath${file%/*}
+        cmd=${cmd}$'\n'"cd $remoteDir; put $localpath/$file;"
+    done
+    cmd="${cmd} bye"
+    read -a uploadAsk
+    if [[ $uploadAsk == 'yes' ]]; then
+        echo "上传"
+        # lftp sftp://root:vagrant@192.168.33.10 -e "$cmd"
+    else
+        echo "取消上传"
+    fi
+}
+
+sftp_upload_file
