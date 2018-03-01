@@ -1,21 +1,49 @@
 #!/bin/bash
 
-localpath="/home/lerko/Documents/dev_12301/www/html/Service"
-remotepath="/var/www/html/Service/"
+localpath=`pwd`
+remotepath="/var/www/html/$1"
 
 function sftp_upload_file(){
-    for file in `git diff --raw master |awk '{print $6}'`; do
+    if [[ $remotepath == "" ]]; then
+        echo "没有远程目录的参数"
+        exit
+    fi
+    echo "需要上传的文件如下"
+    for file in `git diff --raw --diff-filter=ACMRTUXB master |awk '{print $6}'`; do
+        echo $file
         remoteDir=$remotepath${file%/*}
         cmd=${cmd}$'\n'"cd $remoteDir; put $localpath/$file;"
     done
     cmd="${cmd} bye"
+    echo ""
+    echo "=================="
+    echo "上传远程路径:$remotepath"
+    echo "是否上传数据 yes|no"
     read -a uploadAsk
     if [[ $uploadAsk == 'yes' ]]; then
         echo "上传"
-        # lftp sftp://root:vagrant@192.168.33.10 -e "$cmd"
+        lftp sftp://chenyq:ru4jxasIRKYyz5oa@121.196.193.109:12301 -e "$cmd"
     else
         echo "取消上传"
     fi
+    echo "=================="
 }
+
+function checkGitRep(){
+    log=`git log|grep fatal`
+    if [[ $log == '' ]]; then
+        return 1
+    else
+        return 0
+    fi
+}
+
+
+checkGitRep
+
+if [[ $? == 0 ]]; then
+    echo "不是一个git仓库!"
+    exit
+fi
 
 sftp_upload_file
