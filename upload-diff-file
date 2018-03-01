@@ -2,6 +2,7 @@
 
 localpath=`pwd`
 remotepath="/var/www/html/$1"
+branch=${2-'master'}
 
 function sftp_upload_file(){
     if [[ $remotepath == "" ]]; then
@@ -9,7 +10,7 @@ function sftp_upload_file(){
         exit
     fi
     echo "需要上传的文件如下"
-    for file in `git diff --raw --diff-filter=ACMRTUXB master |awk '{print $6}'`; do
+    for file in `git diff --raw --diff-filter=ACMRTUXB $branch |awk '{print $6}'`; do
         echo $file
         remoteDir=$remotepath${file%/*}
         cmd=${cmd}$'\n'"cd $remoteDir; put $localpath/$file;"
