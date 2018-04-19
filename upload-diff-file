@@ -1,8 +1,18 @@
 #!/bin/bash
 
 localpath=`pwd`
-remotepath="/var/www/html/$1"
+if [[ $1 == '' ]]; then
+    echo "没有写根目录"
+    exit
+fi
+remotepath="/var/www/html/$1/"
 branch=${2-'master'}
+envMathine=${3-'138'}
+if [[ $envMathine == '138' ]]; then
+    envPtpCmd='sftp://deploy:deploy@12301*@192.168.20.138:22'
+else
+    envPtpCmd='sftp://chenyq:ru4jxasIRKYyz5oa@121.196.193.109:12301'
+fi
 
 function sftp_upload_file(){
     if [[ $remotepath == "" ]]; then
@@ -19,16 +29,30 @@ function sftp_upload_file(){
     echo ""
     echo "=================="
     echo "上传远程路径:$remotepath"
+    echo "上传的pft:$envPtpCmd"
     echo "是否上传数据 yes|no"
     read -a uploadAsk
+
     if [[ $uploadAsk == 'yes' ]]; then
         echo "上传"
-        lftp sftp://chenyq:ru4jxasIRKYyz5oa@121.196.193.109:12301 -e "$cmd"
+        lftp $envPtpCmd -e "$cmd"
     else
         echo "取消上传"
     fi
     echo "=================="
 }
+
+function getPftPath(){
+    if [[ $1 == "dev" ]]; then
+        echo 'sftp://chenyq:ru4jxasIRKYyz5oa@121.196.193.109:12301'
+    elif [[ $1 == "138" ]]; then
+        echo 'sftp://deploy:deploy@12301*@192.168.20.138:22'
+    else
+        echo 'sftp://deploy:deploy@12301*@192.168.20.138:22'
+    fi
+    return 1;
+}
+
 
 function checkGitRep(){
     log=`git log|grep fatal`
@@ -40,7 +64,7 @@ function checkGitRep(){
 }
 
 
-checkGitRep
+checkGitRep 
 
 if [[ $? == 0 ]]; then
     echo "不是一个git仓库!"
