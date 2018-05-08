@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if [[ `whoami` != 'root' ]]; then
+    whoami
+    echo "请使用root用户执行"
+    exit
+fi
+
+if [[ ! -n $1 ]]; then
+    echo "请输入要替换的hosts文件"
+    exit
+fi
+
+if [[ ! -f $1 ]]; then
+    echo "不是一个文件"
+    exit
+fi
+
+cp /etc/hosts ~/hosts.bak
+cp $1 /etc/hosts
+/etc/init.d/networking restart

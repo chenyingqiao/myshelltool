@@ -1,0 +1,12 @@
+#!/bin/bash
+
+files=`find -path ./.git -prune -o -type f -name '*.*'`
+for file in $files; do
+    echo `wc -w $file|awk '{print $1}'`
+done
+exit
+fileRow = `wc -l $files|awk '{print $1}'`
+echo $fileRow
+for i in  $fileRow; do
+    echo i
+done
